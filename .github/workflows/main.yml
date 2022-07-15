@@ -1,0 +1,36 @@
+name: MyFood App Preview Deployment
+
+on: 
+  pull_request:
+    branches:
+      - main
+      
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@master
+
+    - name: Context
+      uses: okteto/context@latest
+      with:
+        token: ${{ secrets.OKTETO_TOKEN }}
+
+    - name: Create namespace
+      uses: okteto/create-namespace@latest
+      with:
+        namespace: pr-${{ github.event.number }}-namespace
+   
+    - name: Deploy application
+      uses: okteto/deploy-stack@latest
+      with:
+        build: "true"
+        namespace: pr-${{ github.event.number }}-namespace
+
+    - name: add comment to PR
+      uses: okteto/notify-pr@latest
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        message: "Preview environment available at https://web-pr-${{ github.event.number }}-namespace.cloud.okteto.net"  
