@@ -10,8 +10,16 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<ApplicationContext>(options =>
+if(builder.Environment.IsDevelopment())
+{
+    builder.Services.AddDbContext<ApplicationContext>(options =>
+    options.UseInMemoryDatabase("API"));
+}
+else
+{
+    builder.Services.AddDbContext<ApplicationContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+}
 
 builder.Services.AddHttpClient("Calculation", httpClient =>
 {
@@ -33,14 +41,15 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-
-using (var serviceScope = app.Services
-    .GetRequiredService<IServiceScopeFactory>()
-    .CreateScope())
+if(app.Environment.IsProduction())
 {
-    using var context = serviceScope.ServiceProvider.GetService<ApplicationContext>();
-    context?.Database.Migrate();
+    using (var serviceScope = app.Services
+        .GetRequiredService<IServiceScopeFactory>()
+        .CreateScope())
+    {
+        using var context = serviceScope.ServiceProvider.GetService<ApplicationContext>();
+        context?.Database.Migrate();
+    }
 }
-
 
 app.Run();

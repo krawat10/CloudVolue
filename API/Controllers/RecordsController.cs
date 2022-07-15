@@ -10,7 +10,7 @@ using API.Models;
 
 namespace API.Controllers
 {
-    [Route("api/v1/")]
+    [Route("api/")]
     [ApiController]
     public class RecordsController : ControllerBase
     {
@@ -25,9 +25,23 @@ namespace API.Controllers
 
         // GET: api/5
         [HttpGet("{name}")]
-        public async Task<ActionResult<(decimal avg, decimal sum)>> GetRecord(string name)
+        public async Task<ActionResult<(decimal avg, decimal sum)>> GetRecord(string name, uint? from, uint? to)
         {
-            var result = await httpClient.GetFromJsonAsync<(decimal avg, decimal sum)>($"api/Calculation/{name}");
+            from ??= 0;
+            to ??= uint.MaxValue;
+            
+            try
+            {
+                var result = await httpClient.GetStringAsync($"api/Calculation/{name}?from={from}&to={to}");
+
+                return Ok(result);
+            }
+            catch (System.Exception ex)
+            {
+                
+                return StatusCode(500, ex.Message);
+            }
+            
 
 
 
@@ -41,8 +55,6 @@ namespace API.Controllers
           //  {
           //      return NotFound();
           //  }
-
-            return result;
         }
 
         // POST: api/Records
@@ -53,7 +65,7 @@ namespace API.Controllers
             _context.Records.AddRange(records);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetRecord", new { count = records.Count() }, records);
+            return CreatedAtAction("GetRecord", new { name = "multiple" }, records);
         }
     }
 }
