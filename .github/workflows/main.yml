@@ -18,7 +18,7 @@ jobs:
         namespace: krawat10
     
     - name: "Create stack"
-      uses: okteto/deploy-stack@latest
+      uses: okteto/deploy-preview@latest
       with:
         build: "true"
         file: "docker-compose.yml"
