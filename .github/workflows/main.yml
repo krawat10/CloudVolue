@@ -18,9 +18,10 @@ jobs:
         namespace: krawat10
     
     - name: "Create stack"
-      uses: okteto/deploy-stack@latest
+      uses: okteto/deploy@latest
       with:
         build: "true"
+        file: "okteto.yml"
 
     - name: "Push changes"
       uses: okteto/push@latest
