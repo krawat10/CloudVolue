@@ -25,36 +25,25 @@ namespace API.Controllers
 
         // GET: api/5
         [HttpGet("{name}")]
-        public async Task<ActionResult<(decimal avg, decimal sum)>> GetRecord(string name, uint? from, uint? to)
+        public async Task<ActionResult<Result>> GetRecord(string name, uint? from, uint? to)
         {
             from ??= 0;
             to ??= uint.MaxValue;
             
-            try
-            {
-                var result = await httpClient.GetStringAsync($"api/Calculation/{name}?from={from}&to={to}");
+            if(string.IsNullOrWhiteSpace(name))
+                return BadRequest();
 
-                return Ok(result);
-            }
-            catch (System.Exception ex)
+            var result = await httpClient.GetAsync($"api/Calculation/{name}?from={from}&to={to}");
+            if(result.IsSuccessStatusCode)
             {
+                var json = await result.Content.ReadFromJsonAsync<Result>();
+                return Ok(json);
+            }
                 
-                return StatusCode(500, ex.Message);
-            }
+            if(result.StatusCode == System.Net.HttpStatusCode.NotFound)
+                return NotFound();
             
-
-
-
-          //if (_context.Records == null)
-          //{
-          //    return NotFound();
-          //}
-          //  var @record = await _context.Records.FindAsync(id);
-
-          //  if (@record == null)
-          //  {
-          //      return NotFound();
-          //  }
+            return StatusCode(500, "Service unavailable");
         }
 
         // POST: api/Records
@@ -65,7 +54,15 @@ namespace API.Controllers
             _context.Records.AddRange(records);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetRecord", new { name = "multiple" }, records);
+            var names = string.Join(',', records.Select(x => x.Name).Distinct());
+
+            return CreatedAtAction("GetRecord", new { name = names }, records);
+        }
+
+        public record Result 
+        {
+            public decimal Sum { get; set; }
+            public decimal Avg { get; set; }
         }
     }
 }

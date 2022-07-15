@@ -1,13 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace API.Models
 {
     public class Record
     {
-        [Key]
+        [Key][JsonIgnore]
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public uint T { get; set; }
+        public uint T { get; set; } // todo should use JsonPropertyName attribute 
         public decimal V { get; set; }
     }
 }
