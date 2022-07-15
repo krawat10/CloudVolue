@@ -15,7 +15,7 @@ jobs:
     - name: "Activate Namespace"
       uses: okteto/namespace@latest
       with:
-        name: simple-cloud-native
+        namespace: simple-cloud-native
     
     - name: "Deploy application"
       uses: okteto/apply@latest
@@ -27,4 +27,3 @@ jobs:
       uses: okteto/push@latest
       with:
         namespace: simple-cloud-native
-        name: hello-world
