@@ -1,29 +1,23 @@
-on: [push]
-
-name: example
+# file: .github/workflows/preview.yaml
+on:
+  pull_request:
+    branches:
+      - main
 
 jobs:
-
-  devflow:
+  preview:
     runs-on: ubuntu-latest
     steps:
-    
-    - uses: okteto/context@latest
+    - name: Context
+      uses: okteto/context@latest
       with:
+        url: ${{secrets.OKTETO_URL}}
         token: ${{ secrets.OKTETO_TOKEN }}
-    
-    - name: "Activate Namespace"
-      uses: okteto/namespace@latest
-      with:
-        namespace: krawat10
-    
-    - name: "Create stack"
-      uses: okteto/deploy-preview@latest
-      with:
-        build: "true"
-        file: "docker-compose.yml"
 
-    - name: "Push changes"
-      uses: okteto/push@latest
+    - name: Deploy preview environment
+      uses: okteto/deploy-preview@latest
+      env:
+       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        namespace: krawat10
+        name: pr-${{ github.event.number }}-krawat10
+        timeout: 15m
