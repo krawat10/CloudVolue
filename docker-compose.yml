@@ -1,0 +1,62 @@
+version: '3.5'
+
+networks:
+  # Network for api gateway
+  network-gateway:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.28.2.0/24
+  # Network for microservices
+  network-microservice:
+    #internal: true
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.28.4.0/24
+
+
+services:
+  api:
+    image: ${DOCKER_REGISTRY-}api
+    build:
+      context: .
+      dockerfile: API/Dockerfile
+    container_name: api
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+    networks:
+      - network-gateway
+      - network-microservice
+    links:
+      - db
+    depends_on:
+      - db
+
+  calculation:
+    build:
+      context: ./
+      dockerfile: Calculation/Dockerfile
+    container_name: calculation
+    restart: unless-stopped
+    networks:
+      - network-microservice
+    links:
+      - db
+    depends_on:
+      - db
+
+  db:
+   image: mcr.microsoft.com/mssql/server:2019-latest
+   container_name: db
+   restart: on-failure
+   environment:
+    - "ACCEPT_EULA=Y"
+    - "SA_PASSWORD=Pass@word"
+   ports:
+    - "1433:1433"
+   networks:
+    - network-microservice
