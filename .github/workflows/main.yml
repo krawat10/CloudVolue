@@ -21,7 +21,7 @@ jobs:
       uses: okteto/deploy-stack@latest
       with:
         build: "true"
-        file: "okteto.yml"
+        file: "docker-compose.yml"
 
     - name: "Push changes"
       uses: okteto/push@latest
