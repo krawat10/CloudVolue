@@ -15,16 +15,16 @@ jobs:
     - name: "Activate Namespace"
       uses: okteto/namespace@latest
       with:
-        name: cindylopez
+        name: simple-cloud-native
     
     - name: "Deploy application"
       uses: okteto/apply@latest
       with:
-        namespace: cindylopez
+        namespace: simple-cloud-native
         manifest: okteto.yml
 
     - name: "Push changes"
       uses: okteto/push@latest
       with:
-        namespace: cindylopez
+        namespace: simple-cloud-native
         name: hello-world
