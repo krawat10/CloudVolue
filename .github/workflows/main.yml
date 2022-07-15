@@ -15,15 +15,15 @@ jobs:
     - name: "Activate Namespace"
       uses: okteto/namespace@latest
       with:
-        namespace: simple-cloud-native
+        namespace: krawat10
     
     - name: "Deploy application"
       uses: okteto/apply@latest
       with:
-        namespace: simple-cloud-native
+        namespace: krawat10
         manifest: okteto.yml
 
     - name: "Push changes"
       uses: okteto/push@latest
       with:
-        namespace: simple-cloud-native
+        namespace: krawat10
