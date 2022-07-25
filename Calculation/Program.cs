@@ -18,7 +18,7 @@ if(builder.Environment.IsDevelopment())
 else
 {
     builder.Services.AddDbContext<ApplicationContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration["DefaultConnection"]));
 }
 
 var app = builder.Build();

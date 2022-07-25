@@ -23,7 +23,7 @@ spec:
           env:
             - name: ASPNETCORE_ENVIRONMENT
               value: Production
-            - name: ConnectionStrings__DefaultConnection
+            - name: DefaultConnection
               valueFrom:
                 secretKeyRef:
                   name: mssql-secret
