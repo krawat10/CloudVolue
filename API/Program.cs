@@ -24,7 +24,7 @@ else
 
 builder.Services.AddHttpClient("Calculation", httpClient =>
 {
-    httpClient.BaseAddress = new Uri("http://calculation");
+    httpClient.BaseAddress = new Uri(builder.Configuration["CalculationURL"]);
 });
 
 var app = builder.Build();
