@@ -23,6 +23,11 @@ spec:
           env:
             - name: ASPNETCORE_ENVIRONMENT
               value: Development
+            - name: ConnectionStrings__DefaultConnection
+              valueFrom:
+                secretKeyRef:
+                  name: mssql-secret
+                  key: mssql-connection-string 
           resources:
             requests:
               memory: "64Mi"
@@ -41,7 +46,7 @@ spec:
     app: calculation
   ports:
   - protocol: TCP
-    port:  8001
+    port: 80
     targetPort: 80
     nodePort: 31002
 

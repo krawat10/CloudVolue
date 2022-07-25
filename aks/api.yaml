@@ -51,6 +51,6 @@ spec:
     app: api
   ports:
   - protocol: TCP
-    port: 8000
+    port: 80
     targetPort: 80
-    nodePort: 31001 # how to connect using NodePort
+    nodePort: 31004 # how to connect using NodePort

@@ -3,4 +3,4 @@ kind: ConfigMap
 metadata:
   name: calculation-configmap
 data:
-  calculation_url: http://calculation-service:8001
+  calculation_url: http://calculation-service

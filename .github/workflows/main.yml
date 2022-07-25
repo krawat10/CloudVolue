@@ -15,7 +15,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - uses: mr-smithers-excellent/docker-build-push@v5
-      name: Build & push Docker shoppingapp image
+      name: Build & push Docker api image
       with:
         image: krawat10/api
         tags: latest
@@ -25,7 +25,7 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
 
     - uses: mr-smithers-excellent/docker-build-push@v5
-      name: Build & push Docker shoppingapi image
+      name: Build & push Docker calculation image
       with:
         image: krawat10/calculation
         tags: latest

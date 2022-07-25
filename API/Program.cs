@@ -36,7 +36,7 @@ app.UseDeveloperExceptionPage();
     app.UseSwaggerUI();
 }
 app.MapHealthChecks("/health");
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
