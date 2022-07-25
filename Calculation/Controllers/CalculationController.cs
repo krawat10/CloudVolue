@@ -29,11 +29,10 @@ namespace API.Controllers
           {
               return BadRequest();
           }
-
-          var records = _context.Records
-              .Where(x => x.Name == name);
-                            // x.T > from && 
-                            // x.T < to);
+            var records = _context.Records
+                .Where(x => x.Name == name &&
+                            x.T > from && 
+                            x.T < to);
 
             if (!records.Any())
             {
