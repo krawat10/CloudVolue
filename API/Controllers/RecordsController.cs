@@ -27,23 +27,45 @@ namespace API.Controllers
         [HttpGet("{name}")]
         public async Task<ActionResult<Result>> GetRecord(string name, uint? from, uint? to)
         {
-            from ??= 0;
-            to ??= uint.MaxValue;
-            
-            if(string.IsNullOrWhiteSpace(name))
-                return BadRequest();
-
-            var result = await httpClient.GetAsync($"api/Calculation/{name}?from={from}&to={to}");
-            if(result.IsSuccessStatusCode)
+            if (name == null)
             {
-                var json = await result.Content.ReadFromJsonAsync<Result>();
-                return Ok(json);
+                return BadRequest();
             }
-                
-            if(result.StatusCode == System.Net.HttpStatusCode.NotFound)
+            var records = _context.Records
+                .Where(x => x.Name == name &&
+                            x.T > from &&
+                            x.T < to);
+
+            if (!records.Any())
+            {
                 return NotFound();
-            
-            return StatusCode(500, "Service unavailable");
+            }
+
+            var result = new Result
+            {
+                Avg = await records.Select(x => x.V).AverageAsync(),
+                Sum = await records.Select(x => x.V).SumAsync(),
+            };
+
+            return Ok(result);
+
+            // from ??= 0;
+            // to ??= uint.MaxValue;
+            //
+            // if(string.IsNullOrWhiteSpace(name))
+            //     return BadRequest();
+            //
+            // var result = await httpClient.GetAsync($"api/Calculation/{name}?from={from}&to={to}");
+            // if(result.IsSuccessStatusCode)
+            // {
+            //     var json = await result.Content.ReadFromJsonAsync<Result>();
+            //     return Ok(json);
+            // }
+            //     
+            // if(result.StatusCode == System.Net.HttpStatusCode.NotFound)
+            //     return NotFound();
+            //
+            // return StatusCode(500, "Service unavailable");
         }
 
         // POST: api/Records
