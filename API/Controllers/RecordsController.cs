@@ -27,43 +27,23 @@ namespace API.Controllers
         [HttpGet("{name}")]
         public async Task<ActionResult<Result>> GetRecord(string name, uint? from, uint? to)
         {
-            if (name == null)
-            {
+            from ??= 0;
+            to ??= uint.MaxValue;
+            
+            if(string.IsNullOrWhiteSpace(name))
                 return BadRequest();
-            }
-            var records = _context.Records
-                .Where(x => x.Name == name);
-
-            if (!records.Any())
+            
+            var result = await httpClient.GetAsync($"api/Calculation/{name}?from={from}&to={to}");
+            if(result.IsSuccessStatusCode)
             {
+                var json = await result.Content.ReadFromJsonAsync<Result>();
+                return Ok(json);
+            }
+                
+            if(result.StatusCode == System.Net.HttpStatusCode.NotFound)
                 return NotFound();
-            }
-
-            var result = new Result
-            {
-                Avg = await records.Select(x => x.V).AverageAsync(),
-                Sum = await records.Select(x => x.V).SumAsync(),
-            };
-
-            return Ok(result);
-
-            // from ??= 0;
-            // to ??= uint.MaxValue;
-            //
-            // if(string.IsNullOrWhiteSpace(name))
-            //     return BadRequest();
-            //
-            // var result = await httpClient.GetAsync($"api/Calculation/{name}?from={from}&to={to}");
-            // if(result.IsSuccessStatusCode)
-            // {
-            //     var json = await result.Content.ReadFromJsonAsync<Result>();
-            //     return Ok(json);
-            // }
-            //     
-            // if(result.StatusCode == System.Net.HttpStatusCode.NotFound)
-            //     return NotFound();
-            //
-            // return StatusCode(500, "Service unavailable");
+            
+            return StatusCode(500, "Service unavailable");
         }
 
         // POST: api/Records
