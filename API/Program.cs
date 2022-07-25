@@ -49,6 +49,7 @@ if(app.Environment.IsProduction())
         .CreateScope())
     {
         using var context = serviceScope.ServiceProvider.GetService<ApplicationContext>();
+        context?.Database.EnsureCreated();
         context?.Database.Migrate();
     }
 }
